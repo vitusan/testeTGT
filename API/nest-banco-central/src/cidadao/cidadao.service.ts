@@ -1,8 +1,8 @@
 import { Cidadao } from './entities/cidadao.entity';
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
-  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
@@ -18,14 +18,19 @@ export class CidadaoService {
 
   async create(createCidadaoDto: CreateCidadaoDto): Promise<Cidadao> {
     const cidadao = this.repository.create(createCidadaoDto);
-    if ((await this.findOneByCPF(cidadao.id)) === undefined) {
+    if ((await this.findOneByCPF(cidadao.id)) !== undefined) {
       throw new ForbiddenException('CPF já cadastrado no sistema.');
     }
     return this.repository.save(cidadao);
   }
 
-  findOne(id: string): Promise<Cidadao> {
-    return this.repository.findOne(id);
+  async findOne(id: string): Promise<Cidadao> {
+    const cidadao = await this.repository.findOne(id);
+    if (cidadao !== undefined) {
+      return this.repository.findOne(id);
+    } else {
+      throw new NotFoundException('Cidadão não encontrado.');
+    }
   }
 
   findOneByCPF(cpf: string): Promise<Cidadao> {
@@ -37,13 +42,17 @@ export class CidadaoService {
     updateCidadaoDto: UpdateCidadaoDto,
   ): Promise<Cidadao> {
     const allowedFields = ['endereco', 'email', 'telefone', 'limiteCredito'];
+    const invalidReqParams = [];
     Object.entries(updateCidadaoDto).forEach((prop) => {
       if (!allowedFields.includes(prop[0])) {
-        throw new NotAcceptableException(
-          `Parâmetros de requisição inválidos para o campo ${prop[0]}.`,
-        );
+        invalidReqParams.push(prop[0]);
       }
     });
+    if (invalidReqParams.length > 0) {
+      throw new BadRequestException(
+        `Parâmetros de requisição inválidos para o(s) campo(s): ${invalidReqParams.toString()}.`,
+      );
+    }
     const cidadao = await this.repository.preload({
       id: id,
       ...updateCidadaoDto,
