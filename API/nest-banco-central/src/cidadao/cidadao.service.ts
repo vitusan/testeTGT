@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { CreateCidadaoDto } from './dto/create-cidadao.dto';
 import { UpdateCidadaoDto } from './dto/update-cidadao.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from '../../util/uuidValidator';
 
 @Injectable()
 export class CidadaoService {
@@ -18,13 +19,16 @@ export class CidadaoService {
 
   async create(createCidadaoDto: CreateCidadaoDto): Promise<Cidadao> {
     const cidadao = this.repository.create(createCidadaoDto);
-    if ((await this.findOneByCPF(cidadao.id)) !== undefined) {
+    if ((await this.repository.findOne({ cpf: cidadao.cpf })) !== undefined) {
       throw new ForbiddenException('CPF já cadastrado no sistema.');
     }
     return this.repository.save(cidadao);
   }
 
   async findOne(id: string): Promise<Cidadao> {
+    if (!validate(id)) {
+      throw new BadRequestException(`UUID inválido.`);
+    }
     const cidadao = await this.repository.findOne(id);
     if (cidadao !== undefined) {
       return this.repository.findOne(id);
@@ -33,14 +37,13 @@ export class CidadaoService {
     }
   }
 
-  findOneByCPF(cpf: string): Promise<Cidadao> {
-    return this.repository.findOne(cpf);
-  }
-
   async update(
     id: string,
     updateCidadaoDto: UpdateCidadaoDto,
   ): Promise<Cidadao> {
+    if (!validate(id)) {
+      throw new BadRequestException(`UUID inválido.`);
+    }
     const allowedFields = ['endereco', 'email', 'telefone', 'limiteCredito'];
     const invalidReqParams = [];
     Object.entries(updateCidadaoDto).forEach((prop) => {

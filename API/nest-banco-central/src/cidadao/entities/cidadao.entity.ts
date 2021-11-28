@@ -29,6 +29,6 @@ export class Cidadao extends BaseEntity {
   @Column({ name: 'telefone', type: 'varchar', length: 11 })
   telefone: string;
 
-  @Column({ name: 'limite_credito', type: 'double' })
+  @Column({ name: 'limite_credito', type: 'money' })
   limiteCredito: number;
 }
