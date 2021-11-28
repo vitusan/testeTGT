@@ -34,18 +34,22 @@ export class CidadaoController {
     return this.cidadaoService.create(createCidadaoDto);
   }
 
-  @Get(':id')
   @ApiOperation({
     summary: 'Consulta as informações de um cidadão através de UUID ou CPF',
   })
-  @ApiParam({ name: 'id', description: 'UUID ou CPF', type: 'string' })
-  @ApiFoundResponse({
+  @ApiParam({
+    name: 'id',
+    description: 'UUID ou CPF. Use 73489445074 para testar',
+    type: 'string',
+  })
+  @ApiOkResponse({
     description: 'JSON contendo as informações do cidadao',
   })
   @ApiNotFoundResponse({
     description: 'Cidadão não encontrado na base de dados',
   })
   @ApiBadRequestResponse({ description: 'UUID ou CPF incorretos' })
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.cidadaoService.findOne(id);
   }
