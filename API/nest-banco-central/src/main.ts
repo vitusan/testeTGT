@@ -12,7 +12,8 @@ async function bootstrap() {
     .setDescription(
       "This API retrieves citizen's basic data from database and allows patching/altering of this data, as well as insertion of new citizens in the Open Banking system.",
     )
-    .setVersion('1.0')
+    .setVersion('1.0.0')
+    .addTag('cidadao', 'Operações de cadastro e consulta sobre o cidadão')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

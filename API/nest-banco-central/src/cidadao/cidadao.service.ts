@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { CreateCidadaoDto } from './dto/create-cidadao.dto';
 import { UpdateCidadaoDto } from './dto/update-cidadao.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validate } from '../../util/uuidValidator';
+import { isUUID, isCPF } from '../../util/uuidValidator';
 
 @Injectable()
 export class CidadaoService {
@@ -19,21 +19,27 @@ export class CidadaoService {
 
   async create(createCidadaoDto: CreateCidadaoDto): Promise<Cidadao> {
     const cidadao = this.repository.create(createCidadaoDto);
-    if ((await this.repository.findOne({ cpf: cidadao.cpf })) !== undefined) {
-      throw new ForbiddenException('CPF já cadastrado no sistema.');
+    if ((await this.repository.findOne({ cpf: cidadao.cpf })) === undefined) {
+      return this.repository.save(cidadao);
     }
-    return this.repository.save(cidadao);
+    throw new ForbiddenException('Cidadão já cadastrado no sistema.');
   }
 
   async findOne(id: string): Promise<Cidadao> {
-    if (!validate(id)) {
-      throw new BadRequestException(`UUID inválido.`);
-    }
-    const cidadao = await this.repository.findOne(id);
-    if (cidadao !== undefined) {
-      return this.repository.findOne(id);
+    if (isUUID(id) || isCPF(id)) {
+      let cidadao;
+      if (isUUID(id)) {
+        cidadao = await this.repository.findOne(id);
+      } else {
+        cidadao = await this.repository.findOne({ cpf: id });
+      }
+      if (cidadao !== undefined) {
+        return cidadao;
+      } else {
+        throw new NotFoundException('Cidadão não encontrado.');
+      }
     } else {
-      throw new NotFoundException('Cidadão não encontrado.');
+      throw new BadRequestException(`Id de cidadão inválido.`);
     }
   }
 
@@ -41,28 +47,32 @@ export class CidadaoService {
     id: string,
     updateCidadaoDto: UpdateCidadaoDto,
   ): Promise<Cidadao> {
-    if (!validate(id)) {
-      throw new BadRequestException(`UUID inválido.`);
-    }
-    const allowedFields = ['endereco', 'email', 'telefone', 'limiteCredito'];
-    const invalidReqParams = [];
-    Object.entries(updateCidadaoDto).forEach((prop) => {
-      if (!allowedFields.includes(prop[0])) {
-        invalidReqParams.push(prop[0]);
+    if (isUUID(id) || isCPF(id)) {
+      const allowedFields = ['endereco', 'email', 'telefone', 'limiteCredito'];
+      const invalidBodyFileds = [];
+      Object.entries(updateCidadaoDto).forEach((prop) => {
+        if (!allowedFields.includes(prop[0])) {
+          invalidBodyFileds.push(prop[0]);
+        }
+      });
+      if (invalidBodyFileds.length === 0) {
+        const cidadaoBase = await this.findOne(id);
+        const updatedCidadao = await this.repository.preload({
+          id: cidadaoBase.id,
+          ...updateCidadaoDto,
+        });
+        if (updatedCidadao) {
+          return this.repository.save(updatedCidadao);
+        } else {
+          throw new NotFoundException(`Cidadão de id: ${id} não encontrado.`);
+        }
+      } else {
+        throw new BadRequestException(
+          `Corpo de requisição inválido para o(s) campo(s): ${invalidBodyFileds.toString()}.`,
+        );
       }
-    });
-    if (invalidReqParams.length > 0) {
-      throw new BadRequestException(
-        `Parâmetros de requisição inválidos para o(s) campo(s): ${invalidReqParams.toString()}.`,
-      );
+    } else {
+      throw new BadRequestException(`ID de cidadão inválido.`);
     }
-    const cidadao = await this.repository.preload({
-      id: id,
-      ...updateCidadaoDto,
-    });
-    if (!cidadao) {
-      throw new NotFoundException(`Cidadão de id: ${id} não encontrado.`);
-    }
-    return this.repository.save(cidadao);
   }
 }

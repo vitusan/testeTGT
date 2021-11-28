@@ -17,8 +17,8 @@ export class CreateCidadaoDto {
   nome: string;
 
   @ApiProperty({
-    example: '11122233344',
-    description: 'Only 11 digits with no punctuation. A valid brazilian CPF.',
+    example: '73489445074',
+    description: 'Apenas 11 dígiots e nenhuma pontuação. Um CPF válido.',
   })
   @IsCPF()
   @Length(11, 11)
@@ -26,28 +26,28 @@ export class CreateCidadaoDto {
 
   @ApiProperty({
     example: 'Distrito Federal/Brasília, Setor Comercial Sul.',
-    description: 'Any adress with more than 15 caracteres',
+    description: 'Qualquer endereço com mais de 15 caracteres',
   })
   @IsString()
   @Length(15, 255)
   endereco: string;
 
   @ApiProperty({
-    example: 'example@email.com',
+    example: 'srincrivel@gmail.com',
   })
   @IsEmail()
   email: string;
 
   @ApiProperty({
     example: '61997854224',
-    description: 'DDD + optional ninth digit + 8 caracters.',
+    description: 'DDD + nono dígito opcional + 8 caracteres.',
   })
   @IsPhone()
   telefone: string;
 
   @ApiProperty({
     example: '1000.00',
-    description: 'Positive floating point ammounts',
+    description: 'Quantias positivas.',
   })
   @IsPositive()
   limiteCredito: number;
