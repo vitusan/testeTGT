@@ -1,0 +1,17 @@
+<% layout('layouts/login')%>
+<main class="form-signin">
+    <form action="/" method="POST">
+        <img class="mb-4 filter-white" src="/images/bank.svg" alt="logo" width="80" height="63">
+        <h1 class="h3 mb-3 fw-normal">Login</h1>
+        <div class="form-floating text-body">
+          <input type="text" class="form-control" id="floatingInput" name="user[username]" placeholder="usuario">
+          <label for="floatingInput">Nome de usuário</label>
+        </div>
+        <div class="form-floating text-body">
+          <input type="password" class="form-control" id="floatingPassword" name="user[password]" placeholder="senha">
+          <label for="floatingPassword">Senha</label>
+        </div>
+        <button class="w-100 btn btn-lg btn-secondary fw-bold border-white bg-white" type="submit">Entrar</button>
+        <p class="mb-5 mt-3"><a href="https://github.com/vitusan" class="text-white">Victor Andrade© 2021</a></p>
+      </form>
+</main>

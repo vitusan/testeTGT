@@ -1,0 +1,54 @@
+<% layout('layouts/boilerplate')%>
+    <div class="row mt-5">
+        <form action="/clientes/" method="post">
+            <div class="mb-3">
+                <label for="nomeInput" class="form-label">Nome</label>
+                <% if (status===200) { %>
+                    <input type="text" class="form-control" id="nomeInput" name="cliente[nome]" value="<%= clienteOpenBanking.nome %>">
+                <% } else { %>
+                    <input type="text" class="form-control" id="nomeInput" name="cliente[nome]">
+                <% } %>
+            </div>
+            <div class="mb-3">
+                <label for="cpfInput" class="form-label">CPF</label>
+                <% if (status===200) { %>
+                    <input type="text" class="form-control" id="cpfInput" name="cliente[cpf]" value="<%= clienteOpenBanking.cpf %>">
+                <% } else { %>
+                    <input type="text" class="form-control" id="cpfInput" name="cliente[cpf]" value="<%= cpf %>">
+                <% } %>
+            </div>
+            <div class="mb-3">
+                <label for="enderecoInput" class="form-label">Endereço</label>
+                <% if (status===200) { %>
+                    <input type="text" class="form-control" id="enderecoInput" name="cliente[endereco]" value="<%= clienteOpenBanking.endereco %>">
+                <% } else { %>
+                    <input type="text" class="form-control" id="enderecoInput" name="cliente[endereco]">
+                <% } %>
+            </div>
+            <div class="mb-3">
+                <label for="emailInput" class="form-label">Email</label>
+                <% if (status===200) { %>
+                    <input type="email" class="form-control" id="emailInput" name="cliente[email]" value="<%= clienteOpenBanking.email %>">
+                <% } else { %>
+                    <input type="email" class="form-control" id="emailInput" name="cliente[email]">
+                <% } %>
+            </div>
+            <div class="mb-3">
+                <label for="telefoneInput" class="form-label">Telefone</label>
+                <% if (status===200) { %>
+                    <input type="text" class="form-control" id="telefoneInput" name="cliente[telefone]" value="<%= clienteOpenBanking.telefone %>">
+                <% } else { %>
+                    <input type="text" class="form-control" id="telefoneInput" name="cliente[telefone]">
+                <% } %>
+            </div>
+            <div class="mb-3">
+                <label for="limcredInput" class="form-label">Limite de Crédito</label>
+                <% if (status===200) { %>
+                    <input type="text" class="form-control" id="limcredInput" name="cliente[limiteCredito]" value="<%= parseFloat(clienteOpenBanking.limiteCredito.replace(/[^0-9.-]+/g,"")) %>">
+                <% } else { %>
+                    <input type="text" class="form-control" id="limcredInput" name="cliente[limiteCredito]">
+                <% } %>
+            </div>
+            <button type="submit" class="btn btn-secondary fw-bold border-white bg-white">Cadastrar</button>
+        </form>
+    </div>

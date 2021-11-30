@@ -1,0 +1,84 @@
+<% layout('layouts/boilerplate')%>
+    <div class="row justify-content-center mt-5">
+        <form class="d-flex">
+            <input class="form-control border-white bg-dark text-white me-2" type="search" placeholder="Digite o CPF do cliente..."
+                aria-label="Search" onkeyup="tableFilter()">
+            <button class="btn btn-secondary fw-bold border-white bg-white" type="submit">Search</button>
+        </form>
+    </div>
+    <div class="row mt-5">
+        <div class="table-responsive">
+            <table class="table table-hover table-dark table-striped table-md">
+                <thead>
+                    <tr>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Conta Corrente</th>
+                        <th scope="col">Agência</th>
+                        <th scope="col">Lim. de Créd.</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% clientes.forEach((cliente)=> { %>
+                        <tr>
+                            <td hidden>
+                                <%= cliente._id %>
+                            </td>
+                            <td>
+                                <%= cliente.cpf %>
+                            </td>
+                            <td>
+                                <%= cliente.nome %>
+                            </td>
+                            <td>
+                                <%= cliente.email %>
+                            </td>
+                            <td>
+                                <%= cliente.contaCorrente.numero %>
+                            </td>
+                            <td>
+                                <%= cliente.contaCorrente.agencia %>
+                            </td>
+                            <td>
+                                <%= cliente.limiteCredito %>
+                            </td>
+                            <td>
+                                <form action="<%= `/clientes/${cliente._id}/edit` %>" method="get"><button type="submit"
+                                        class="btn btn-secondary fw-bold border-white bg-white">Editar</button></form>
+                            </td>
+                            <td>
+                                <form action="<%= `/clientes/${cliente._id}?_method=DELETE` %>" method="post"><button
+                                        type="submit"
+                                        class="btn btn-secondary fw-bold border-white bg-white">Deletar</button></form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function tableFilter() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.querySelector("input");
+            filter = input.value.toUpperCase();
+            table = document.querySelector("table");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
