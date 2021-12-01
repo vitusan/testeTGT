@@ -31,6 +31,9 @@ A aplicação consiste em uma plataforma web simulando um sistema de gerenciamen
 - Front end web: Heroku
 - Banco de dados: Postgresql/MongoDB
 
+# Documentação da API do BACEN
+https://bacen-openbanking-api.herokuapp.com/api/
+
 # Como executar o projeto
 
 ## Back end
